@@ -21,11 +21,16 @@ Baseado no artigo "Usaste a IA para escrever o post? Ótimo... Revê a linguagem
 - Deteção automática de linguagem insuflada em textos que o Nando cole — isto é sobre treinar o próprio Nando a detetar, não construir um detetor automático de texto.
 
 ## Requisitos funcionais
-1. O scheduled task lê `conteudo/padroes.md` (e `conteudo/desafios-seed.md` nos primeiros 4 dias) diretamente do GitHub a cada execução.
-2. Escolhe o padrão do dia por rotação simples (dia do ano módulo 4, ou sequencial a partir da data de criação do trigger).
-3. Gera ou reutiliza uma frase de exemplo alinhada com o padrão escolhido, evitando repetir literalmente uma frase já enviada nos últimos 4 dias.
-4. Apresenta a frase e faz 1 a 2 perguntas de desconstrução diretas (no estilo do próprio artigo: "Que X é? Comparado com quê?").
-5. Espera a resposta do Nando na mesma sessão e dá feedback concreto (correto/incorreto + explicação + reescrita sem o padrão).
+1. O prompt do scheduled task carrega um retrato congelado dos 4 padrões e das 4 frases seed (ver `trigger-prompt.md`, v2). Não faz `git clone` nem lê ficheiros no arranque — o desafio aparece sem passos de ferramenta.
+2. Escolhe o padrão do dia por rotação simples: `((dia_do_ano - 1) mod 4) + 1`.
+3. Nos 4 primeiros dias usa a frase seed do padrão; depois gera uma frase nova, curta e verosímil no contexto do Nando, variando setor/papel/número para não repetir frases recentes.
+4. Apresenta a frase e faz 1 a 2 perguntas de desconstrução diretas (no estilo do próprio artigo: "Que X é? Comparado com quê?"). A partir do 2.º dia inclui uma linha de recall com o teste prático do padrão da véspera.
+5. Espera a resposta do Nando na mesma sessão e dá feedback compacto — no máximo 4 linhas (Certo / Falhou / Reescrita / Fixa), uma frase cada, específico à resposta dele.
+6. Revisão relâmpago nos dias 7, 14, 21, ... após 2026-09-10: 4 frases baralhadas, uma por padrão, o Nando identifica cada uma; substitui o desafio normal desse dia.
+
+## Sincronização
+- `conteudo/padroes.md` e `conteudo/desafios-seed.md` continuam a ser a fonte da verdade em SDD.
+- Uma alteração a esses ficheiros só chega ao desafio diário depois de atualizar o bloco em `trigger-prompt.md` e correr um `update_trigger` com o novo conteúdo. É um passo manual e deliberado (trade da v2: arranque mais rápido em troca de sincronização não automática).
 
 ## Requisitos não-funcionais
 - Mensagem curta (a frase + pergunta cabem num ecrã de telemóvel sem scroll excessivo).
@@ -36,9 +41,12 @@ Baseado no artigo "Usaste a IA para escrever o post? Ótimo... Revê a linguagem
 - ✓ Cada execução do scheduled task cobre exatamente um dos 4 padrões, em rotação, sem repetir o padrão do dia anterior.
 - ✓ A frase de exemplo enviada não é idêntica a nenhuma das 3 execuções anteriores.
 - ✓ A mensagem inclui pelo menos uma pergunta de desconstrução direta.
-- ✓ Quando o Nando responde na mesma sessão, recebe feedback específico à sua resposta (não uma explicação genérica do padrão).
+- ✓ O desafio aparece sem passos de ferramenta visíveis (sem clone, sem leitura de ficheiros).
+- ✓ O feedback tem no máximo 4 linhas e é específico à resposta do Nando (não uma explicação genérica do padrão).
+- ✓ A partir do 2.º dia, a mensagem do desafio traz a linha de recall do padrão da véspera.
 
 ## Restrições técnicas
 - Scheduled task criado via `create_trigger` (nunca `CronCreate`, que não sobrevive ao fim da sessão).
-- Repositório público em `github.com/Nankov-ai/linguagem-critica`, lido em cada execução via `git clone` raso (não requer autenticação para leitura).
+- Repositório público em `github.com/Nankov-ai/linguagem-critica` como fonte da verdade em SDD; o trigger em produção não o lê em runtime (ver "Sincronização").
 - Sem build step, sem dependências — o conteúdo é apenas Markdown.
+- Trigger em produção: `trig_016UGL2qZHGnm38qaNjw2hYx`, `0 12 * * *` Europe/Lisbon.
