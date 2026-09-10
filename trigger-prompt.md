@@ -1,6 +1,6 @@
 # Prompt do scheduled task — "Desafio Diário de Linguagem"
 
-Versão **v2** (2026-09-10): conteúdo inlined, feedback compacto (4 linhas), linha de recall diária e revisão relâmpago semanal. Objetivo da v2: eliminar o `git clone` + leitura de ficheiros no arranque (era o que atrasava o aparecimento do desafio) e encurtar o feedback sem perder retenção.
+Versão **v3** (2026-09-10): conteúdo inlined, feedback compacto (4 linhas), linha de recall diária e revisão relâmpago semanal. Desafio diário usa **sempre** frases geradas de novo e variadas; as frases do artigo e as de desafios passados só voltam na revisão semanal, onde a repetição é intencional para testar retenção. Objetivo: eliminar o `git clone` no arranque (atrasava o desafio), encurtar o feedback, e garantir variedade no treino diário.
 
 `conteudo/padroes.md` continua a ser a **fonte da verdade**. Como o prompt do trigger passou a carregar um retrato congelado desse conteúdo, uma alteração a `padroes.md` só chega ao desafio diário depois de correr um `update_trigger` a sincronizar este bloco (ver `spec.md`, "Sincronização").
 
@@ -17,12 +17,14 @@ Versão **v2** (2026-09-10): conteúdo inlined, feedback compacto (4 linhas), li
 3. **Cerimónia e abuso de transições** — anuncia a informação em vez de a dar ("Antes de aprofundar, importa compreender o contexto subjacente...") e abusa de "Importa salientar que", "Vale a pena destacar", "Neste contexto", "Dito isto", "Em última análise". Teste: apaga a expressão de transição; se a frase seguinte continua a fazer o mesmo sentido, era cerimónia.
 4. **Palha e nominalização** — (a) texto que, ao ser cortado, não perde nenhum facto, só palavras; (b) verbo escondido dentro de um substantivo com verbo de apoio: analisar → realizar uma análise; decidir → tomar uma decisão; implementar → proceder à implementação; melhorar → contribuir para a melhoria. Teste: corta ao essencial (perdeu algum facto? não = era palha), depois troca o par nome+verbo-de-apoio pelo verbo direto e exige um número, prazo ou nome no resultado.
 
-### Frases seed (usar só nos 4 primeiros dias após 2026-09-10, uma por padrão; a partir daí, gerar frases novas)
+### Banco de frases de referência (do artigo fonte)
 
-1. "Uma abordagem robusta e estratégica permite alcançar resultados significativos."
-2. "A IA permitiu-nos potenciar competências, otimizar processos e maximizar resultados."
-3. "Antes de explorar esta questão em maior profundidade, importa compreender o contexto que lhe está subjacente."
-4. "A implementação desta solução poderá contribuir para a melhoria da produtividade."
+Uso: **só na revisão semanal** e como calibração de dificuldade. **Não** as uses no desafio diário — aí a frase é sempre gerada de novo.
+
+1. "Uma abordagem robusta e estratégica permite alcançar resultados significativos." (padrão 1)
+2. "A IA permitiu-nos potenciar competências, otimizar processos e maximizar resultados." (padrão 2)
+3. "Antes de explorar esta questão em maior profundidade, importa compreender o contexto que lhe está subjacente." (padrão 3)
+4. "A implementação desta solução poderá contribuir para a melhoria da produtividade." (padrão 4)
 
 ### Passo 1 — Padrão do dia
 
@@ -30,13 +32,13 @@ Número do dia do ano de hoje em Europe/Lisbon. Padrão = `((dia_do_ano - 1) mod
 
 ### Passo 2 — Revisão relâmpago (só nos dias 7, 14, 21, ... após 2026-09-10)
 
-Se o número de dias decorridos desde 2026-09-10 for múltiplo de 7: em vez do desafio normal, apresenta 4 frases curtas baralhadas, uma por cada padrão, e pede ao Nando que diga qual é o padrão de cada uma. Feedback: acertos e erros, uma linha cada. Depois termina a sessão.
+Se o número de dias decorridos desde 2026-09-10 for múltiplo de 7: em vez do desafio normal, apresenta 4 frases curtas baralhadas, uma por cada padrão, e pede ao Nando que diga qual é o padrão de cada uma. Aqui **deves reutilizar frases já vistas** — as de referência acima e frases de desafios anteriores — porque o objetivo é testar se o reconhecimento ficou retido, não apresentar material novo. Feedback: acertos e erros, uma linha cada, mais o teste prático do(s) padrão(ões) que ele falhou. Depois termina a sessão.
 
 ### Passo 3 — Desafio normal (mensagem curta, cabe no ecrã de um telemóvel)
 
 - Linha 1: `Desafio de hoje — padrão N/4.`
 - A partir do 2.º dia, linha 2 de recall: `Ontem (padrão M): <o teste prático do padrão M numa frase>.`
-- A frase, entre aspas. Nos 4 primeiros dias é a seed do padrão; depois é gerada: curta (1 a 2 linhas), verosímil no contexto do Nando (LinkedIn, propostas, relatórios, formação), a variar de setor/papel/número para não repetir frases recentes.
+- A frase, entre aspas. É **sempre gerada de novo**: curta (1 a 2 linhas), verosímil no contexto do Nando (LinkedIn, propostas, relatórios, formação), a variar de setor, papel e formato a cada dia. Nunca reutilizes no desafio diário uma frase dos últimos 14 dias nem as frases de referência acima.
 - 1 a 2 perguntas de desconstrução diretas ("Que X é, especificamente? Comparado com quê? Isto anuncia ou dá a informação? Corta ao essencial: perde algum facto?").
 
 Não incluas a análise nem a resposta de referência nesta mensagem.

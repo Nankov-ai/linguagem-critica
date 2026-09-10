@@ -23,10 +23,10 @@ Baseado no artigo "Usaste a IA para escrever o post? Ótimo... Revê a linguagem
 ## Requisitos funcionais
 1. O prompt do scheduled task carrega um retrato congelado dos 4 padrões e das 4 frases seed (ver `trigger-prompt.md`, v2). Não faz `git clone` nem lê ficheiros no arranque — o desafio aparece sem passos de ferramenta.
 2. Escolhe o padrão do dia por rotação simples: `((dia_do_ano - 1) mod 4) + 1`.
-3. Nos 4 primeiros dias usa a frase seed do padrão; depois gera uma frase nova, curta e verosímil no contexto do Nando, variando setor/papel/número para não repetir frases recentes.
+3. O desafio diário usa sempre uma frase gerada de novo, curta e verosímil no contexto do Nando, variando setor/papel/formato; nunca reutiliza uma frase dos últimos 14 dias nem as 4 frases de referência do artigo. A repetição de exemplos fica reservada à revisão semanal (requisito 6), onde é intencional para testar retenção.
 4. Apresenta a frase e faz 1 a 2 perguntas de desconstrução diretas (no estilo do próprio artigo: "Que X é? Comparado com quê?"). A partir do 2.º dia inclui uma linha de recall com o teste prático do padrão da véspera.
 5. Espera a resposta do Nando na mesma sessão e dá feedback compacto — no máximo 4 linhas (Certo / Falhou / Reescrita / Fixa), uma frase cada, específico à resposta dele.
-6. Revisão relâmpago nos dias 7, 14, 21, ... após 2026-09-10: 4 frases baralhadas, uma por padrão, o Nando identifica cada uma; substitui o desafio normal desse dia.
+6. Revisão relâmpago nos dias 7, 14, 21, ... após 2026-09-10: 4 frases baralhadas, uma por padrão, o Nando identifica cada uma; substitui o desafio normal desse dia. Aqui as frases são reutilizadas de propósito (referência do artigo e desafios anteriores) para testar se o reconhecimento ficou retido.
 
 ## Sincronização
 - `conteudo/padroes.md` e `conteudo/desafios-seed.md` continuam a ser a fonte da verdade em SDD.
